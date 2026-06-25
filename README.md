@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JUWAIRIA — Coming Soon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── TOKENS ── */
+    :root {
+      --black:    #080808;
+      --surface:  #111111;
+      --gold:     #C9A84C;
+      --gold-dim: #8A6E2F;
+      --parchment:#F5EDD6;
+      --muted:    #6B6452;
+      --white:    #FDFAF4;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ── GRAIN TEXTURE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.035;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* ── AMBIENT GRADIENT ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 55% at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 80% 100%, rgba(201,168,76,0.05) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── LAYOUT ── */
+    .page {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 0 24px;
+    }
+
+    /* ── SVG RING BACKGROUND ── */
+    .ring-canvas {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(640px, 92vw);
+      height: min(640px, 92vw);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0;
+      animation: ringFadeIn 2.4s ease 0.3s forwards;
+    }
+
+    @keyframes ringFadeIn {
+      to { opacity: 1; }
+    }
+
+    .ring-outer {
+      animation: rotateSlow 42s linear infinite;
+      transform-origin: center;
+    }
+
+    .ring-inner {
+      animation: rotateSlow 28s linear infinite reverse;
+      transform-origin: center;
+    }
+
+    @keyframes rotateSlow {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    /* ── NAV BAR ── */
+    nav {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 36px 0 0;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.2s forwards;
+    }
+
+    .nav-mark {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 13px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .nav-status {
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 0 60px;
+      gap: 0;
+    }
+
+    .eyebrow {
+      font-size: 9px;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.6s forwards;
+    }
+
+    .wordmark {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(52px, 11vw, 108px);
+      letter-spacing: 0.18em;
+      line-height: 1;
+      color: var(--white);
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.8s forwards;
+    }
+
+    .divider {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, transparent, var(--gold-dim), transparent);
+      margin: 40px auto;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 1.2s forwards;
+    }
+
+    .tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-style: italic;
+      font-size: clamp(19px, 3.5vw, 28px);
+      letter-spacing: 0.04em;
+      color: var(--parchment);
+      line-height: 1.4;
+      max-width: 540px;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 1.4s forwards;
+    }
+
+    .subtext {
+      margin-top: 18px;
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      max-width: 400px;
+      line-height: 1.8;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 1.6s forwards;
+    }
+
+    /* ── FORM ── */
+    .form-wrap {
+      width: 100%;
+      max-width: 460px;
+      margin-top: 56px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 1.9s forwards;
+    }
+
+    .field {
+      width: 100%;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(201,168,76,0.18);
+      color: var(--white);
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      padding: 17px 22px;
+      outline: none;
+      transition: border-color 0.3s, background 0.3s;
+      -webkit-appearance: none;
+      border-radius: 0;
+    }
+
+    .field::placeholder {
+      color: var(--muted);
+      letter-spacing: 0.12em;
+    }
+
+    .field:focus {
+      border-color: rgba(201,168,76,0.55);
+      background: rgba(201,168,76,0.04);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 17px 22px;
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 11px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: color 0.4s, background 0.4s, box-shadow 0.4s;
+      border-radius: 0;
+      margin-top: 6px;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 0;
+    }
+
+    .btn:hover::before { transform: scaleX(1); }
+    .btn:hover {
+      color: var(--black);
+      box-shadow: 0 0 30px rgba(201,168,76,0.25);
+    }
+
+    .btn span {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* success state */
+    .form-success {
+      display: none;
+      text-align: center;
+      padding: 28px;
+      border: 1px solid rgba(201,168,76,0.25);
+      background: rgba(201,168,76,0.04);
+    }
+
+    .form-success .tick {
+      font-size: 22px;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    .form-success p {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 18px;
+      color: var(--parchment);
+      line-height: 1.5;
+    }
+
+    .form-success small {
+      display: block;
+      margin-top: 8px;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      width: 100%;
+      max-width: 1100px;
+      padding: 40px 0 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      opacity: 0;
+      animation: fadeUp 0.9s ease 2.2s forwards;
+    }
+
+    .footer-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 11px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .footer-status {
+      font-size: 9px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+    }
+
+    /* ── KEYFRAMES ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── REDUCED MOTION ── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; }
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 600px) {
+      nav { padding-top: 28px; }
+      .hero { padding: 60px 0 48px; }
+      .divider { height: 44px; margin: 32px auto; }
+      footer { flex-direction: column; gap: 14px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient jewelry ring -->
+  <svg class="ring-canvas" viewBox="0 0 640 640" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#C9A84C" stop-opacity="0.18"/>
+        <stop offset="100%" stop-color="#C9A84C" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="ringGrad" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#C9A84C" stop-opacity="0.55"/>
+        <stop offset="60%" stop-color="#8A6E2F" stop-opacity="0.3"/>
+        <stop offset="100%" stop-color="#C9A84C" stop-opacity="0.1"/>
+      </radialGradient>
+    </defs>
+    <!-- soft glow core -->
+    <circle cx="320" cy="320" r="200" fill="url(#glow)"/>
+    <!-- outer ring -->
+    <g class="ring-outer">
+      <circle cx="320" cy="320" r="260" stroke="url(#ringGrad)" stroke-width="0.6" stroke-dasharray="6 14"/>
+      <circle cx="320" cy="320" r="272" stroke="#C9A84C" stroke-width="0.3" stroke-opacity="0.12"/>
+    </g>
+    <!-- inner ring -->
+    <g class="ring-inner">
+      <circle cx="320" cy="320" r="210" stroke="#C9A84C" stroke-width="0.5" stroke-opacity="0.2" stroke-dasharray="2 20"/>
+      <circle cx="320" cy="320" r="196" stroke="#C9A84C" stroke-width="0.25" stroke-opacity="0.1"/>
+    </g>
+    <!-- four accent diamonds -->
+    <g fill="#C9A84C" fill-opacity="0.35">
+      <polygon points="320,57 324,67 320,77 316,67" />
+      <polygon points="320,563 324,573 320,583 316,573" />
+      <polygon points="57,320 67,324 77,320 67,316" />
+      <polygon points="563,320 573,324 583,320 573,316" />
+    </g>
+  </svg>
+
+  <div class="page">
+
+    <!-- NAV -->
+    <nav>
+      <span class="nav-mark">Juwairia</span>
+      <span class="nav-status">2026 ✦ Preview</span>
+    </nav>
+
+    <!-- HERO -->
+    <main class="hero">
+      <p class="eyebrow">✦ &nbsp; Debut Collection &nbsp; ✦</p>
+      <h1 class="wordmark">Juwairia</h1>
+      <div class="divider"></div>
+      <p class="tagline">A new expression of elegance is coming.</p>
+      <p class="subtext">Join the exclusive waitlist for early access to our debut collection.</p>
+
+      <!-- FORM -->
+      <div class="form-wrap">
+        <form id="waitlistForm" action="(https://formspree.io/f/xjgqyljl)" method="POST">
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <input class="field" type="text" name="name" placeholder="First Name" required autocomplete="given-name" />
+            <input class="field" type="email" name="email" placeholder="Email Address" required autocomplete="email" />
+            <button class="btn" type="submit"><span>Join the Waitlist &nbsp;✦</span></button>
+          </div>
+        </form>
+        <div class="form-success" id="formSuccess">
+          <div class="tick">✦</div>
+          <p>You're on the list.</p>
+          <small>We'll be in touch before anyone else.</small>
+        </div>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+      <span class="footer-brand">Juwairia &copy; 2026</span>
+      <span class="footer-status">Launching Soon</span>
+    </footer>
+
+  </div>
+
+  <script>
+    const form = document.getElementById('waitlistForm');
+    const success = document.getElementById('formSuccess');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector('.btn');
+      btn.querySelector('span').textContent = 'Submitting…';
+      btn.disabled = true;
+
+      const action = form.getAttribute('action');
+      const isPlaceholder = action.includes('YOUR_FORM_ID');
+
+      if (isPlaceholder) {
+        // Demo mode — simulate success
+        await new Promise(r => setTimeout(r, 900));
+      } else {
+        try {
+          const data = new FormData(form);
+          const res = await fetch(action, {
+            method: 'POST',
+            body: data,
+            headers: { Accept: 'application/json' }
+          });
+          if (!res.ok) throw new Error('Network error');
+        } catch {
+          btn.querySelector('span').textContent = 'Try again ✦';
+          btn.disabled = false;
+          return;
+        }
+      }
+
+      form.style.display = 'none';
+      success.style.display = 'block';
+    });
+  </script>
+</body>
+</html>

@@ -411,7 +411,7 @@
 
       <!-- FORM -->
       <div class="form-wrap">
-        <form id="waitlistForm" action="(https://formspree.io/f/xjgqyljl)" method="POST">
+        <form id="waitlistForm" action="https://formspree.io/f/xjgqyljl" method="POST">
           <div style="display:flex; flex-direction:column; gap:14px;">
             <input class="field" type="text" name="name" placeholder="First Name" required autocomplete="given-name" />
             <input class="field" type="email" name="email" placeholder="Email Address" required autocomplete="email" />
